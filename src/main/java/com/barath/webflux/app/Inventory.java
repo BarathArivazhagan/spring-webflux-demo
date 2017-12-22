@@ -55,4 +55,13 @@ public class Inventory implements Serializable{
 
     public Inventory() {
     }
+
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "inventoryId=" + inventoryId +
+                ", productName='" + productName + '\'' +
+                ", locationName='" + locationName + '\'' +
+                '}';
+    }
 }

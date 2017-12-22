@@ -38,4 +38,11 @@ public class InventoryHandler {
         Long inventoryId=Long.parseLong(request.pathVariable("id"));
         return ServerResponse.ok().body(BodyInserters.fromObject(Mono.justOrEmpty(inventoryRepository.findById(inventoryId)).log()));
     }
+
+    public Mono<ServerResponse> getInventories(ServerRequest request){
+
+        Flux<Inventory> inventoryFlux=Flux.fromIterable(inventoryRepository.findAll()).log();
+        return ServerResponse.ok().body(BodyInserters.fromObject(inventoryFlux));
+
+    }
 }
