@@ -32,7 +32,7 @@ public class RouterConfiguration {
                     .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::addInventory)
                 .andRoute(RequestPredicates.POST("/inventory/all")
                         .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::addInventories)
-                .andRoute(RequestPredicates.GET("/inventory/{id}")
+                .andRoute(RequestPredicates.GET("/inventory/get/{id}")
                         .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::getInventory)
                 .andRoute(RequestPredicates.GET("/inventories")
                         .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::getInventories);

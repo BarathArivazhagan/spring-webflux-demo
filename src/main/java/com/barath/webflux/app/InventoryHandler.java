@@ -2,6 +2,7 @@ package com.barath.webflux.app;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyExtractor;
 import org.springframework.web.reactive.function.BodyExtractors;
@@ -27,22 +28,43 @@ public class InventoryHandler {
     }
 
     public Mono<ServerResponse> addInventory(ServerRequest request){
-           return ServerResponse.ok().body(BodyInserters.fromObject(request.bodyToMono(Inventory.class).doOnNext(inventoryRepository::save).log()));
+
+        Mono<Inventory> inventoryMono=request.bodyToMono(Inventory.class);
+
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(inventoryMono.doOnNext(inventoryRepository::save).doOnError( throwable -> {
+            logger.error("error in creating inventory {}",throwable.getMessage());
+        }).log(),Inventory.class);
+
     }
 
     public Mono<ServerResponse> addInventories(ServerRequest request){
-        return ServerResponse.ok().body(BodyInserters.fromObject(request.bodyToFlux(Inventory.class).doOnNext(inventoryRepository::save).log()));
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(request.bodyToFlux(Inventory.class).doOnNext(inventoryRepository::save).log(),Inventory.class);
     }
 
     public Mono<ServerResponse> getInventory(ServerRequest request){
         Long inventoryId=Long.parseLong(request.pathVariable("id"));
-        return ServerResponse.ok().body(BodyInserters.fromObject(Mono.justOrEmpty(inventoryRepository.findById(inventoryId)).log()));
+        return ServerResponse.ok().body(Mono.justOrEmpty(inventoryRepository.findById(inventoryId)).log(),Inventory.class);
     }
 
     public Mono<ServerResponse> getInventories(ServerRequest request){
 
         Flux<Inventory> inventoryFlux=Flux.fromIterable(inventoryRepository.findAll()).log();
-        return ServerResponse.ok().body(BodyInserters.fromObject(inventoryFlux));
+        return ServerResponse.ok().body(inventoryFlux,Inventory.class).onErrorReturn(ServerResponse.noContent().build().block());
 
+    }
+
+    public Mono<ServerResponse> updateInventory(ServerRequest request){
+
+
+        Mono<Inventory> inventoryMono=request.bodyToMono(Inventory.class);
+        Mono<Inventory> updatedInventoryMono=inventoryMono.doOnNext( inventory -> {
+
+             inventoryRepository.findById(inventory.getInventoryId());
+        }).doOnNext(inventoryRepository::save).log()
+                .doOnError( throwable -> {
+                    logger.error( "Error in updating the inventory {} ",throwable.getMessage());
+                });
+
+        return ServerResponse.ok().body(updatedInventoryMono,Inventory.class).onErrorReturn(ServerResponse.noContent().build().block());
     }
 }
