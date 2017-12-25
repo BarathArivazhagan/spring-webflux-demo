@@ -57,13 +57,13 @@ public class InventoryHandler {
 
 
         Mono<Inventory> inventoryMono=request.bodyToMono(Inventory.class);
-        Mono<Inventory> updatedInventoryMono=inventoryMono.doOnNext( inventory -> {
 
-             inventoryRepository.findById(inventory.getInventoryId());
-        }).doOnNext(inventoryRepository::save).log()
-                .doOnError( throwable -> {
-                    logger.error( "Error in updating the inventory {} ",throwable.getMessage());
-                });
+        Mono<Inventory> updatedInventoryMono=inventoryMono.flatMap( inventory -> {
+
+            return inventoryRepository.findById(inventory.getInventoryId()).isPresent() ?  Mono.just(inventory) : Mono.error(new Error("no such inventory with inventory id found"));
+
+
+        }).doOnNext( inventoryRepository::save).log();
 
         return ServerResponse.ok().body(updatedInventoryMono,Inventory.class).onErrorReturn(ServerResponse.noContent().build().block());
     }

@@ -35,7 +35,9 @@ public class RouterConfiguration {
                 .andRoute(RequestPredicates.GET("/inventory/get/{id}")
                         .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::getInventory)
                 .andRoute(RequestPredicates.GET("/inventories")
-                        .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::getInventories);
+                        .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::getInventories)
+                .andRoute(RequestPredicates.PUT("/inventory/update")
+                        .and(accept(MediaType.APPLICATION_JSON_UTF8)),inventoryHandler::updateInventory);
 
     }
 }
