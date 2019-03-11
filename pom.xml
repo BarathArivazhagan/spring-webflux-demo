@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.barath.webflux.demo</groupId>
-	<artifactId>spring-webflux-functional-model</artifactId>
+	<artifactId>spring-webflux-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>spring-webflux-functional-model</name>
+	<name>spring-webflux-demo</name>
 	<description>Demo project for Spring Boot 2.0 REACTIVE Functional model</description>
 
 	<parent>
